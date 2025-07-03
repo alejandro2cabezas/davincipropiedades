@@ -1,0 +1,36 @@
+// lista default de propiedades, si no hay props hay que guardar este array en localstorage
+export const propiedades = [
+  {
+    id: 1,
+    titulo: "Casa Moderna en Zona Norte",
+    precio: 120000,
+    ubicacion: "San Isidro",
+    tipo: "Casa",
+    habitaciones: 3,
+    baños: 2,
+    imagen:"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop",
+    destacada: true,
+  },
+  {
+    id: 2,
+    titulo: "Departamento Luminoso",
+    precio: 85000,
+    ubicacion: "Palermo",
+    tipo: "Departamento",
+    habitaciones: 2,
+    baños: 1,
+    imagen:"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=300&fit=crop",
+    destacada: true,
+  },
+  {
+    id: 3,
+    titulo: "Casa con Jardín",
+    precio: 150000,
+    ubicacion: "Belgrano",
+    tipo: "Casa",
+    habitaciones: 4,
+    baños: 3,
+    imagen:"https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400&h=300&fit=crop",
+    destacada: true,
+  },
+];
