@@ -1458,3 +1458,29 @@ button:focus-visible {
     font-size: 1rem;
   }
 }
+
+.admin-panel-container{
+  width: 100%;
+  min-height: 900px;
+  justify-content: centers;
+  display: flex;
+  align-items: center;
+  flex-direction: column  ;
+}
+
+.admin-textarea{
+  width: 50%;
+  height: 300px;
+}
+
+.guardar-objeto-button{
+  margin-top: 40px;
+  color: white;
+  background-color: var(--principal);
+}
+
+.guardar-objeto-button.red{
+  margin-top: 20px;
+  margin-bottom: 10px;
+  background-color: red;
+}
