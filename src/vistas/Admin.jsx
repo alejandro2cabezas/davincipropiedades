@@ -12,11 +12,11 @@ export default function Admin({ usuarioLogeado }) {
     try {
       setLoading(true);
       //cargar usuarios
-      const usuariosResponse = await fetch("http://localhost:3000/usuarios");
+      const usuariosResponse = await fetch("http://localhost:3000/usuarios", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       const usuariosData = await usuariosResponse.json();
       setUsuariosObj(JSON.stringify(usuariosData, null, 2));
       // cargar propiedades
-      const propiedadesResponse = await fetch("http://localhost:3000/propiedades");
+      const propiedadesResponse = await fetch("http://localhost:3000/propiedades", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       const propiedadesData = await propiedadesResponse.json();
       setPropiedadesObj(JSON.stringify(propiedadesData, null, 2));
         
@@ -46,11 +46,11 @@ export default function Admin({ usuarioLogeado }) {
       for (const usuario of usuarios) {
         if (usuario.id) {
           await fetch(`http://localhost:3000/usuarios/${usuario.id}`, {
-            method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(usuario)
+            method: "PUT", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}, body: JSON.stringify(usuario)
           });
         } else {
           await fetch("http://localhost:3000/usuarios", {
-            method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(usuario),
+            method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}, body: JSON.stringify(usuario),
           });
         }
       }
@@ -82,12 +82,12 @@ export default function Admin({ usuarioLogeado }) {
         if (propiedad.id) {
           //actualizar propiedad existente
           await fetch(`http://localhost:3000/propiedades/${propiedad.id}`, {
-            method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(propiedadData),
+            method: "PUT", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}, body: JSON.stringify(propiedadData),
           });
         } else {
           //crear nueva propiedad
           await fetch("http://localhost:3000/propiedades", {
-            method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(propiedadData),
+            method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}, body: JSON.stringify(propiedadData),
           });
         }
       }
@@ -103,7 +103,7 @@ export default function Admin({ usuarioLogeado }) {
     if (!confirm("¿Está seguro que desea RESETEAR TODA LA BASE DE DATOS? Esta acción eliminará todos los usuarios, propiedades y datos relacionados. NO SE PUEDE DESHACER.")) return;
   
     try {
-      const response = await fetch('http://localhost:3000/resetAll', {method: 'DELETE'});
+      const response = await fetch('http://localhost:3000/resetAll', {method: 'DELETE', headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
   
       if (response.ok) {
         setUsuariosObj("[]");
@@ -124,11 +124,11 @@ export default function Admin({ usuarioLogeado }) {
       setError("");
 
       //recargar usuarios
-      const usuariosResponse = await fetch("http://localhost:3000/usuarios");
+      const usuariosResponse = await fetch("http://localhost:3000/usuarios", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       const usuariosData = await usuariosResponse.json();
       setUsuariosObj(JSON.stringify(usuariosData, null, 2));
       //recargar propiedades
-      const propiedadesResponse = await fetch("http://localhost:3000/propiedades");
+      const propiedadesResponse = await fetch("http://localhost:3000/propiedades", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       const propiedadesData = await propiedadesResponse.json();
       setPropiedadesObj(JSON.stringify(propiedadesData, null, 2));
 

@@ -9,7 +9,7 @@ export default function PublicacionesUsuario({usuarioLogeado}) {
   const fetchPropiedadesUsuario = async () => {
     if (usuarioLogeado) {
       try {
-        const response = await fetch(`http://localhost:3000/propiedades/usuario/${usuarioLogeado.id}`);
+        const response = await fetch(`http://localhost:3000/propiedades/usuario/${usuarioLogeado.id}`, {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
         if (response.ok) {
           const propiedades = await response.json();
           setPropiedadesDelUsuario(propiedades);

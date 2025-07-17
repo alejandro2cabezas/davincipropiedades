@@ -16,7 +16,7 @@ export default function CardPropiedad({ propiedad, noMostrarFavorito }) {
     if (!usuario.id) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/favoritos/${usuario.id}`);
+      const response = await fetch(`http://localhost:3000/favoritos/${usuario.id}`, {headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}});
       if (response.ok) {
         const favoritos = await response.json();
         const esFavorito = favoritos.some(fav => fav.id === propiedad.id);
@@ -32,7 +32,7 @@ export default function CardPropiedad({ propiedad, noMostrarFavorito }) {
 
     try {
       const response = await fetch("http://localhost:3000/favoritos", {
-        method: "POST", headers: {"Content-Type": "application/json"},
+        method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`},
         body: JSON.stringify({usuario_id: usuario.id, propiedad_id: propiedad.id}),
       });
 

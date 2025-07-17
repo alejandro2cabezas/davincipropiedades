@@ -48,7 +48,7 @@ export default function Login() {
     try {
       if (isLoggedIn) {
         const response = await fetch("http://localhost:3000/login", {
-          method: "POST", headers: {"Content-Type": "application/json"},
+          method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`},
           body: JSON.stringify({email: formData.email, password: formData.password}),
         });
 
@@ -56,6 +56,7 @@ export default function Login() {
 
         if (data.usuario) {
           localStorage.setItem("usuarioLogeado", JSON.stringify(data.usuario));
+          localStorage.setItem("token", data.token);
           navigate("/");
           setTimeout(() => window.location.reload(), 100);
         } else {
@@ -63,7 +64,7 @@ export default function Login() {
         }
       } else {
         const response = await fetch("http://localhost:3000/register", {
-          method: "POST", headers: {"Content-Type": "application/json"},
+          method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`},
           body: JSON.stringify({email: formData.email, password: formData.password, nombre: formData.nombre, apellido: formData.apellido, telefono: formData.telefono}),
         });
 

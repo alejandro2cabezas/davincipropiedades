@@ -15,7 +15,7 @@ export default function ResultadosBusqueda() {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/propiedades");
+      const response = await fetch("http://localhost:3000/propiedades", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       const propiedades = await response.json();
       setPropiedades(propiedades);
       setPropiedadesFiltradas(propiedades);

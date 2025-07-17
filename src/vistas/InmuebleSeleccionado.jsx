@@ -11,7 +11,7 @@ export default function InmuebleSeleccionado() {
   const fetchPropiedad = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/propiedades/${id}`);
+      const response = await fetch(`http://localhost:3000/propiedades/${id}`, {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       if (!response.ok) throw new Error("Propiedad no encontrada");
 
       const data = await response.json();
@@ -32,7 +32,7 @@ export default function InmuebleSeleccionado() {
 
     try {
       const response = await fetch("http://localhost:3000/favoritos", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`},
         body: JSON.stringify({usuario_id: usuario.id, propiedad_id: parseInt(id)}),
       });
 

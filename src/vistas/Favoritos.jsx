@@ -14,7 +14,7 @@ export default function Favoritos({usuarioLogeado}) {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/favoritos/${usuarioLogeado.id}`);
+      const response = await fetch(`http://localhost:3000/favoritos/${usuarioLogeado.id}`, {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
       if (!response.ok) throw new Error("Error en favoritos");
       const favoritos = await response.json();
       setPropiedadesfavoritas(favoritos);

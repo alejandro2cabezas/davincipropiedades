@@ -74,7 +74,7 @@ export default function PublicarInmueble({usuarioLogeado}) {
         destacada: formData.destacada,
       };
 
-      const response = await fetch("http://localhost:3000/propiedades", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(propiedadData)});
+      const response = await fetch("http://localhost:3000/propiedades", {method: "POST", headers: {"Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}`}, body: JSON.stringify(propiedadData)});
 
       if (!response.ok) console.error("Error al crear la propiedad");
 

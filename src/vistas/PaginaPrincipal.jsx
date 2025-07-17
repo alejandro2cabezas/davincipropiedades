@@ -8,7 +8,7 @@ const PaginaPrincipal = () => {
   const navigate = useNavigate();
 
   const getDestacadas = async () => {
-    const res = await fetch("http://localhost:3000/propiedades/destacadas");
+    const res = await fetch("http://localhost:3000/propiedades/destacadas", {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
     const data = await res.json();
     setPropiedades(data)
   };
@@ -35,11 +35,12 @@ const PaginaPrincipal = () => {
       </section>
 
       <section className="destacadas-section">
-        <div className="destacadas-container">
-          <h2 className="destacadas-title">Propiedades Destacadas</h2>
-          {propiedades.length == 0 && <p className="text-center">Sin Destacadas para listar</p> }
-          <div className="destacadas-grid">{ propiedades.map(propiedad => <CardPropiedad key={propiedad.id} propiedad={propiedad} />) }</div>
-        </div>
+        {propiedades.length > 0 && <div className="destacadas-container">
+            <h2 className="destacadas-title">Propiedades Destacadas</h2>
+            {propiedades.length == 0 && <p className="text-center">Sin Destacadas para listar</p> }
+            <div className="destacadas-grid">{ propiedades.map(propiedad => <CardPropiedad key={propiedad.id} propiedad={propiedad} />) }</div>
+          </div>
+        }
       </section>
     </div>
   );
