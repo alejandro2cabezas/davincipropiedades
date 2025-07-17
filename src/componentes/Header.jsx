@@ -12,11 +12,11 @@ export default function Header({usuarioLogeado}) {
           { !usuarioLogeado 
             ? <Link to="/login">Iniciar Sesion</Link>
             : <>
-              {usuarioLogeado.role === "admin" && <Link to="/admin">Admin Panel</Link>}
+              {usuarioLogeado.rol === "admin" && <Link to="/admin">Admin Panel</Link>}
               <Link to="/resultados">Buscar Propiedades</Link>
               <Link to="/favoritos">Favoritas</Link>
-              <Link to="/publicar">Crear Publicacion</Link>
-              <Link to="/mis-publicaciones">Mis Propiedades</Link>
+              {usuarioLogeado.rol != "cliente" && <Link to="/publicar">Crear Publicacion</Link>}
+              {usuarioLogeado.rol != "cliente" && <Link to="/mis-publicaciones">Mis Propiedades</Link>}
               <div onClick={() => localStorage.removeItem('usuarioLogeado')} className="d-flex">
                 <Link to="/login">Cerrar Sesion</Link>
               </div>

@@ -3,18 +3,7 @@ import { Home, MapPin, DollarSign, Bed, Bath, Camera, Check, X, KeyboardIcon, Da
 import PageTitle from "../componentes/PageTitle";
 import { useNavigate } from "react-router-dom";
 
-const propiedadVacia = {
-  titulo: "",
-  precio: "",
-  ubicacion: "",
-  tipo: "",
-  habitaciones: "",
-  descripcion: "",
-  superficie: "",
-  baños: "",
-  imagen: "",
-  destacada: false
-};
+const propiedadVacia = { titulo: "", precio: "", ubicacion: "", tipo: "", habitaciones: "", descripcion: "", superficie: "", baños: "", imagen: "", destacada: false };
 
 export default function PublicarInmueble({usuarioLogeado}) {
   const [formData, setFormData] = useState(propiedadVacia);
@@ -63,41 +52,47 @@ export default function PublicarInmueble({usuarioLogeado}) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      const nuevaPropiedad = {
-        id: Date.now(),
+    try {
+      const propiedadData = {
         titulo: formData.titulo,
-        precio: parseInt(formData.precio),
-        ubicacion: formData.ubicacion,
-        tipo: formData.tipo,
-        habitaciones: parseInt(formData.habitaciones),
-        baños: parseInt(formData.baños),
-        superficie: parseInt(formData.superficie),
         descripcion: formData.descripcion,
-        imagen: formData.imagen,
+        precio: parseFloat(formData.precio),
+        superficie: parseInt(formData.superficie) || null,
+        habitaciones: parseInt(formData.habitaciones),
+        banos: parseInt(formData.baños),
+        tipo: formData.tipo,
+        ubicacion: formData.ubicacion,
+        url_imagen: formData.imagen,
+        usuario_id: usuarioLogeado.id,
         destacada: formData.destacada,
-        userId: usuarioLogeado.id,
       };
 
-      const propiedadesActuales = JSON.parse(localStorage.getItem("propiedades") || "[]");
-      const nuevasPropiedades = [...propiedadesActuales, nuevaPropiedad];
-      localStorage.setItem("propiedades", JSON.stringify(nuevasPropiedades));
+      const response = await fetch("http://localhost:3000/propiedades", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(propiedadData)});
+
+      if (!response.ok) console.error("Error al crear la propiedad");
+
+      const result = await response.json();
 
       setIsSubmitting(false);
       setSubmitSuccess(true);
       setFormData(propiedadVacia);
-      setTimeout(() => { 
-        setSubmitSuccess(false)
-        navigate("/propiedad/"+nuevaPropiedad.id)
-       }, 3000);
-    }, 1000);
+
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        navigate(`/propiedad/${result.id}`);
+      }, 1200);
+    } catch (error) {
+      console.error("Error al crear", error);
+      setIsSubmitting(false);
+      alert("Error al publicar la propiedad");
+    }
   };
 
   const resetForm = () => {

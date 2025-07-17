@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [formData, setFormData] = useState({email: '', password: '', confirmPassword: ''});
+  const [formData, setFormData] = useState({email: "", password: "", confirmPassword: "", nombre: "", apellido: "", telefono: ""});
   const [error, setError] = useState({});
   const [cargando, setCargando] = useState(false);
   const navigate = useNavigate();
@@ -34,65 +34,59 @@ export default function Login() {
     
     return nuevoserror;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCargando(true);
-    
+
     const errorValidacion = validarFormulario();
     if (Object.keys(errorValidacion).length > 0) {
       setError(errorValidacion);
       setCargando(false);
       return;
-    };
+    }
 
     try {
       if (isLoggedIn) {
-        // Lógica de login
-        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-        const usuario = usuarios.find(u => u.email === formData.email && u.password === formData.password);
-        
-        if (usuario) {
-          localStorage.setItem('usuarioLogeado', JSON.stringify(usuario));
-          navigate('/');
-          setTimeout(() => window.location.reload(), 100)
-        } else {
-          setError({ general: 'Email o contraseña incorrectos' });
-        };
+        const response = await fetch("http://localhost:3000/login", {
+          method: "POST", headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email: formData.email, password: formData.password}),
+        });
 
+        const data = await response.json();
+
+        if (data.usuario) {
+          localStorage.setItem("usuarioLogeado", JSON.stringify(data.usuario));
+          navigate("/");
+          setTimeout(() => window.location.reload(), 100);
+        } else {
+          setError({ general: data.error });
+        }
       } else {
-        // Lógica de registro
-        const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-        
-        if (usuarios.find(u => u.email === formData.email)) {
-          setError({ email: 'Este email ya está registrado' });
-          setCargando(false);
-          return;
-        };
-        const nuevoUsuario = {
-          id: Date.now().toString(),
-          email: formData.email,
-          password: formData.password,
-          role: usuarios.length === 0 ? 'admin' : 'usuario', // Primer usuario es admin
-          createdAt: new Date().toISOString()
-        };
-        
-        usuarios.push(nuevoUsuario);
-        localStorage.setItem('usuarios', JSON.stringify(usuarios));
-        localStorage.setItem('usuarioLogeado', JSON.stringify(nuevoUsuario));
-        
-        navigate('/');
+        const response = await fetch("http://localhost:3000/register", {
+          method: "POST", headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email: formData.email, password: formData.password, nombre: formData.nombre, apellido: formData.apellido, telefono: formData.telefono}),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem("usuarioLogeado", JSON.stringify(data.usuario));
+          navigate("/");
+          setTimeout(() => window.location.reload(), 100);
+        } else {
+          setError({ general: data.error });
+        }
       }
-    } catch {
-      setError({general: 'Error al procesar la solicitud'});
+    } catch (error) {
+      setError({ general: "Error al procesar la solicitud" });
     }
-    
+
     setCargando(false);
   };
 
   const toggleMode = () => {
     setIsLoggedIn(!isLoggedIn);
-    setFormData({email: '', password: '', confirmPassword: ''});
+    setFormData({email: "", password: "", confirmPassword: "", nombre: "", apellido: "", telefono: ""});
     setError({});
   };
 
@@ -107,6 +101,26 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="login-form">
             {error.general && <div className="error-message general-error">{error.general}</div>}
+
+            {!isLoggedIn && <>
+              <div className="form-group">
+                <label htmlFor="nombre" className="form-label">Nombre</label>
+                <input type="text" id="nombre" name="nombre" value={formData.nombre}
+                  onChange={handleInputChange} className="form-input" placeholder="Tu nombre" />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="apellido" className="form-label">Apellido</label>
+                <input type="text" id="apellido" name="apellido" value={formData.apellido}
+                  onChange={handleInputChange} className="form-input" placeholder="Tu apellido" />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
+                <input type="tel" id="telefono" name="telefono" value={formData.telefono}
+                  onChange={handleInputChange} className="form-input" placeholder="Tu teléfono" />
+              </div>
+            </>}
 
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email</label>

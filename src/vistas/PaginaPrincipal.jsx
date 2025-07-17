@@ -7,10 +7,13 @@ const PaginaPrincipal = () => {
   const [propiedades, setPropiedades] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const destacadas = JSON.parse(localStorage.getItem("propiedades") || "[]")
-    setPropiedades(destacadas.filter(prop => prop.destacada))
-  }, [])
+  const getDestacadas = async () => {
+    const res = await fetch("http://localhost:3000/propiedades/destacadas");
+    const data = await res.json();
+    setPropiedades(data)
+  };
+
+  useEffect(() => { getDestacadas() }, [])
 
   const buscar = (e) => {
     e.preventDefault();

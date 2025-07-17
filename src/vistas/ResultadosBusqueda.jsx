@@ -5,10 +5,30 @@ import PageTitle from "../componentes/PageTitle"
 
 export default function ResultadosBusqueda() {
   const [filtros, setFiltros] = useState({tipo: "Todos", habitaciones: "Todos", precioMin: "", precioMax: "", ubicacion: "Todos"});
-  const [propiedadesFiltradas, setPropiedadesFiltradas] = useState([])
+  const [propiedades, setPropiedades] = useState([]);
+  const [propiedadesFiltradas, setPropiedadesFiltradas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const getPropiedades = async () => {
+    // si tengo alguna propiedad no necesito hacer la request
+    if (propiedades.length > 0) return propiedades;
+
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:3000/propiedades");
+      const propiedades = await response.json();
+      setPropiedades(propiedades);
+      setPropiedadesFiltradas(propiedades);
+    } catch (error) {
+      console.error("Error al obtener propiedades:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { getPropiedades() }, [])
+  
   useEffect(() => {
-    const propiedades = JSON.parse(localStorage.getItem("propiedades") || "[]");
     setPropiedadesFiltradas(propiedades.filter(p => {
       const cumpleTipo = filtros.tipo === "Todos" || p.tipo === filtros.tipo;
       const cumpleHabitaciones = filtros.habitaciones === "Todos" || p.habitaciones === parseInt(filtros.habitaciones);
@@ -73,10 +93,12 @@ export default function ResultadosBusqueda() {
 
       <div className="resultados-section">
         <div className="resultados-header">
-          <h2 className="resultados-title">Propiedades Encontradas ({propiedadesFiltradas.length})</h2>
+          <h2 className="resultados-title">Propiedades Encontradas ({propiedades.length})</h2>
         </div>
+
+        { loading && <p>Cargando...</p> }
         
-        <div className="destacadas-grid">
+        { !loading && <div className="destacadas-grid">
           { propiedadesFiltradas.length > 0 
             ? propiedadesFiltradas.map(p => <CardPropiedad key={p.id} propiedad={p} />)
             : <div className="no-resultados">
@@ -84,6 +106,7 @@ export default function ResultadosBusqueda() {
               </div>
           }
         </div>
+        }
       </div>
     </div>
   );

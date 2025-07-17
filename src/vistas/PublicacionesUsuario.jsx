@@ -6,15 +6,23 @@ import { useState, useEffect } from "react";
 export default function PublicacionesUsuario({usuarioLogeado}) {
   const [propiedadesDelUsuario, setPropiedadesDelUsuario] = useState([]);
 
-  useEffect(() => {
-    // primer accion del componente: traer propiedades y matchear por id usuario
-    const propiedades = JSON.parse(localStorage.getItem("propiedades") || "[]");
+  const fetchPropiedadesUsuario = async () => {
     if (usuarioLogeado) {
-      // filtrar propiedades que pertenecen al usuario logueado
-      const propiedadesUsuario = propiedades.filter(p => p.userId === usuarioLogeado.id);
-      setPropiedadesDelUsuario(propiedadesUsuario);
+      try {
+        const response = await fetch(`http://localhost:3000/propiedades/usuario/${usuarioLogeado.id}`);
+        if (response.ok) {
+          const propiedades = await response.json();
+          setPropiedadesDelUsuario(propiedades);
+        } else {
+          console.error('Error al obtener propiedades del usuario');
+        }
+      } catch (error) {
+        console.error('Error al conectar con el servidor:', error);
+      }
     }
-  }, []);
+  };
+
+  useEffect(() => { fetchPropiedadesUsuario() }, [usuarioLogeado]);
 
   return (
     <div className="resultados-container">

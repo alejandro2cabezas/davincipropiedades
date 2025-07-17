@@ -1,36 +1,44 @@
-import { Heart, MapPin, Bed, Bath, Home, ArrowLeft, Phone, Mail, Share2, MessageCircle, Dessert } from "lucide-react";
+import { Heart, MapPin, Bed, Bath, Home, ArrowLeft, Phone,  MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 export default function InmuebleSeleccionado() {
   const [propiedad, setPropiedad] = useState(null);
-  const [isFavorito, setIsFavorito] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { id } = useParams();
+  
+  const fetchPropiedad = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:3000/propiedades/${id}`);
+      if (!response.ok) throw new Error("Propiedad no encontrada");
 
-  useEffect(() => {
-    const propiedades = JSON.parse(localStorage.getItem("propiedades") || "[]");
-    const propiedadEncontrada = propiedades.find(p => p.id === parseInt(id));
-    
-    if (propiedadEncontrada) {
-      setPropiedad(propiedadEncontrada);
-      const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
-      const esFavorito = favoritos.some(fav => fav.id === propiedadEncontrada.id);
-      setIsFavorito(esFavorito);
+      const data = await response.json();
+      setPropiedad(data);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al obtener propiedad:", error);
+      setPropiedad(null);
     }
-  }, []);
+  };
 
-  const toggleFavorito = () => {
-    const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
-    
-    if (isFavorito) {
-      const nuevosFavoritos = favoritos.filter(fav => fav.id !== propiedad.id);
-      localStorage.setItem("favoritos", JSON.stringify(nuevosFavoritos));
-      setIsFavorito(false);
-    } else {
-      const nuevosFavoritos = [...favoritos, propiedad];
-      localStorage.setItem("favoritos", JSON.stringify(nuevosFavoritos));
-      setIsFavorito(true);
+  useEffect(() => { fetchPropiedad() }, [id]);
+
+  const toggleFavorito = async () => {
+    const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
+    if (!usuario.id) return;
+
+    try {
+      const response = await fetch("http://localhost:3000/favoritos", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({usuario_id: usuario.id, propiedad_id: parseInt(id)}),
+      });
+
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error al manejar favorito:", error);
     }
   };
 
@@ -55,11 +63,8 @@ export default function InmuebleSeleccionado() {
       <div className="inmueble-content">
         <div className="inmueble-image-section">
           <div className="inmueble-main-image">
-            <img src={propiedad.imagen} alt={propiedad.titulo} />
+            <img src={propiedad.url_imagen} alt={propiedad.titulo} />
             {propiedad.destacada && <div className="badge-destacada">Destacada</div>}
-            <button onClick={toggleFavorito} className="btn-favorito heart-abs-icon">
-              <Heart size={24} fill={isFavorito ? "#ff4757" : "none"}  color={isFavorito ? "#ff4757" : "#666"} />
-            </button>
           </div>
         </div>
 
